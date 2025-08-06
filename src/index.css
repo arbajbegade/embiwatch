@@ -12,3 +12,15 @@
 .btn-primary {
   @apply bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg;
 }
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
