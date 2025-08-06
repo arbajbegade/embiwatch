@@ -14,7 +14,7 @@ const Settings = () => {
     };
 
     return (
-        <div className="h-screen flex flex-col items-center justify-center bg-gray-100 relative">
+        <div className="h-screen flex flex-col items-center justify-center bg-primary relative">
             {/* Back Button */}
             <button
                 onClick={() => navigate(-1)}
@@ -27,12 +27,12 @@ const Settings = () => {
             {/* Form Container */}
             <form
                 onSubmit={handleSubmit}
-                className="bg-white p-20 rounded-full shadow-2xl shadow-gray-500/80 w-[350px] h-[350px] flex flex-col items-center justify-center gap-6"
+                className="bg-secondary p-20 rounded-full shadow-2xl shadow-gray-500/80 w-[350px] h-[350px] flex flex-col items-center justify-center gap-6"
             >
                 <div className="flex flex-col items-center">
                     <FaCog className="text-3xl text-gray-700 animate-spin-slow mb-2" />
 
-                    <h2 className="text-xl font-semibold text-gray-800 text-center">
+                    <h2 className="text-xl font-semibold text-primary text-center">
                         Enter Settings Password
                     </h2>
                 </div>
@@ -46,10 +46,7 @@ const Settings = () => {
                     required
                 />
 
-                <button
-                    type="submit"
-                    className="w-40 py-2 rounded-md border border-gray-400 bg-gray-800 text-white font-semibold flex items-center justify-center gap-2 hover:bg-gray-100 transition duration-300 ease-in-out"
-                >
+                <button type="submit"className="btn">
                     Enter <FaArrowRight />
                 </button>
 
