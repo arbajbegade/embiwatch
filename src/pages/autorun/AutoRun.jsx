@@ -1,15 +1,54 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Navbar from '../../component/navbar/Navbar'
+import apiFetch from '../../services/apiFetch';
+import SocketService from '../../services/socketService';
+import ReactApexChart from 'react-apexcharts';
+import AutoChart from './AutoChart';
 
 const AutoRun = () => {
+  const [graphSettings, setGraphSettings] = React.useState(null);
+  const [data, setData] = React.useState(null);
+
+  const fetchData = async () => {
+    try {
+      const response = await apiFetch('/graph-settings');
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setGraphSettings(data.data);
+      console.log('Graph settings fetched:', data.data);
+    } catch (err) {
+      console.error('Failed to fetch graph settings:', err.message);
+      setGraphSettings(null);
+    }
+  };
+
+  useEffect(() => {
+    SocketService.connect("production", JSON.stringify({ request: "production" }));
+    SocketService.on("production", (data) => {
+      const jsonData = JSON.parse(data);
+      setData(jsonData);
+    });
+    SocketService.on("alert", (data) => {
+      const jsonData = JSON.parse(data);
+      if (jsonData.message) {
+        setMessage(jsonData.message);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div>
       <Navbar />
-      <div className='flex flex-col items-center justify-center h-screen bg-gray-100'>
-        <h1 className="text-2xl font-bold text-center mt-8">AutoRun Page</h1>
-        <p className="text-gray-600 mt-4">This is the AutoRun page where you can manage your autorun settings.</p>
-        <p className="text-gray-600 mt-2">Use the navigation bar to go back to the home page or access other features.</p>
-        <p className="text-gray-600 mt-2">More features will be added soon!</p>
+      <div className='flex flex-col items-center justify-center h-screen bg-gray-100 w-full'>
+        <AutoChart liveData={data} graphSettings={graphSettings} />
+
       </div>
     </div>
   )

@@ -1,31 +1,21 @@
-const BASE_URL =  import.meta.env.VITE_BASE_URL;;
+const BASE_URL =  import.meta.env.VITE_BASE_URL; // Or use process.env if supported
 
-const apiFetch = async (endpoint, options = {}) => {
-  const url = `${BASE_URL}${endpoint}`;
-
-  const config = {
-    method: options.method || 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  };
-
-  if (options.body) {
-    config.body = JSON.stringify(options.body);
-  }
+// API Fetch Wrapper
+const apiFetch = async (endpoint, init = {}) => {
+  const fullUrl = `${BASE_URL}${endpoint}`;
 
   try {
-    const response = await fetch(url, config);
+    const response = await fetch(fullUrl, init);
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'Something went wrong!');
+      const errorText = await response.text(); // in case API returns error message
+      throw new Error(`API error ${response.status}: ${errorText}`);
     }
 
-    return await response.json();
-  } catch (error) {
-    console.error('API Fetch Error:', error.message);
-    throw error;
+    return response; // caller will use .json() if needed
+  } catch (err) {
+    console.error('API fetch failed:', err.message);
+    throw err;
   }
 };
 
