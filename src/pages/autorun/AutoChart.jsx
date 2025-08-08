@@ -2,14 +2,16 @@ import React, { useEffect, useState, useRef } from 'react';
 import ReactApexChart from 'react-apexcharts';
 
 const tempKeys = ['temp1', 'temp2', 'temp3', 'temp4'];
-const tempColors = ['#FF4560', '#00E396', '#008FFB', '#FEB019']; // Unique colors per chart
+const colors = ['#FF4560', '#00E396', '#008FFB', '#FEB019', '#775DD0']; // humidity is last
 
 const AutoChart = ({ liveData, graphSettings }) => {
+  console.log('Live Data:', liveData);
   const [seriesData, setSeriesData] = useState({
     temp1: [],
     temp2: [],
     temp3: [],
-    temp4: []
+    temp4: [],
+    humidity: [],
   });
 
   const [categories, setCategories] = useState([]);
@@ -22,7 +24,7 @@ const AutoChart = ({ liveData, graphSettings }) => {
 
     setSeriesData(prev => {
       const updated = { ...prev };
-      tempKeys.forEach(key => {
+      [...tempKeys, 'humidity'].forEach(key => {
         updated[key] = [...(prev[key] || []), liveData[key]];
         if (updated[key].length > maxPoints.current) updated[key].shift();
       });
@@ -36,9 +38,9 @@ const AutoChart = ({ liveData, graphSettings }) => {
     });
   }, [liveData, graphSettings]);
 
-  const generateChartOptions = (tempLabel, color) => ({
+  const generateTempOptions = (label, color) => ({
     chart: {
-      id: `${tempLabel}-chart`,
+      id: `${label}-chart`,
       animations: {
         enabled: true,
         easing: 'linear',
@@ -50,57 +52,90 @@ const AutoChart = ({ liveData, graphSettings }) => {
     colors: [color],
     xaxis: {
       categories: categories,
-      title: {
-        text: graphSettings.x_axis.title
-      }
+      title: { text: graphSettings.x_axis.title }
     },
     yaxis: {
       min: graphSettings.y_axis.min,
       max: graphSettings.y_axis.max,
       tickAmount: graphSettings.y_axis.ticks,
-      title: {
-        text: graphSettings.y_axis.title
-      }
+      title: { text: graphSettings.y_axis.title }
     },
-    stroke: {
-      curve: 'smooth',
-      width: 3
-    },
+    stroke: { curve: 'smooth', width: 3 },
     dataLabels: {
-      enabled: false
+      enabled: true,
+      formatter: (val, { dataPointIndex, w }) => {
+        const lastIndex = w.globals.series[0].length - 1;
+        return dataPointIndex === lastIndex ? val : '';
+      },
+      style: { fontSize: '12px', fontWeight: 'bold' },
+      background: { enabled: true, foreColor: '#fff', borderRadius: 2 }
     },
-    grid: {
-      show: true
+    title: { text: `${label.toUpperCase()} Graph`, align: 'center' },
+    legend: { show: false }
+  });
+
+  const generateHumidityOptions = (color) => ({
+    chart: {
+      id: `humidity-chart`,
+      animations: {
+        enabled: true,
+        easing: 'linear',
+        dynamicAnimation: { speed: 500 }
+      },
+      toolbar: { show: false },
+      zoom: { enabled: false }
     },
-    title: {
-      text: `${tempLabel.toUpperCase()} Graph`,
-      align: 'center',
-      style: { fontSize: '16px' }
+    colors: [color],
+    xaxis: {
+      categories: categories,
+      title: { text: 'Time' }
     },
-    legend: {
-      show: false
-    }
+    yaxis: {
+      min: 0,
+      max: 100,
+      tickAmount: 5,
+      title: { text: 'Humidity (%)' }
+    },
+    stroke: { curve: 'smooth', width: 3 },
+    dataLabels: {
+      enabled: true,
+      formatter: (val, { dataPointIndex, w }) => {
+        const lastIndex = w.globals.series[0].length - 1;
+        return dataPointIndex === lastIndex ? val : '';
+      },
+      style: { fontSize: '12px', fontWeight: 'bold' },
+      background: { enabled: true, foreColor: '#fff', borderRadius: 2 }
+    },
+    title: { text: 'HUMIDITY Graph', align: 'center' },
+    legend: { show: false }
   });
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full px-6">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full px-6">
       {graphSettings ? (
-        tempKeys.map((key, index) => (
-          <div key={key} className="bg-white shadow rounded p-4 w-full">
+        <>
+          {tempKeys.map((key, index) => (
+            <div key={key} className="bg-white shadow rounded p-4 w-full">
+              <ReactApexChart
+                options={generateTempOptions(key, colors[index])}
+                series={[{ name: key.toUpperCase(), data: seriesData[key] }]}
+                type="area"
+                height={300}
+                width="100%"
+              />
+            </div>
+          ))}
+          {/* Separate Humidity Graph */}
+          <div className="bg-white shadow rounded p-4 w-full">
             <ReactApexChart
-              options={generateChartOptions(key, tempColors[index])}
-              series={[
-                {
-                  name: key.toUpperCase(),
-                  data: seriesData[key]
-                }
-              ]}
-              type="line"
+              options={generateHumidityOptions(colors[4])}
+              series={[{ name: 'HUMIDITY', data: seriesData.humidity }]}
+              type="area"
               height={300}
               width="100%"
             />
           </div>
-        ))
+        </>
       ) : (
         <p>Loading graph settings...</p>
       )}

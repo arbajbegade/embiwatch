@@ -18,7 +18,6 @@ const AutoRun = () => {
 
       const data = await response.json();
       setGraphSettings(data.data);
-      console.log('Graph settings fetched:', data.data);
     } catch (err) {
       console.error('Failed to fetch graph settings:', err.message);
       setGraphSettings(null);
@@ -46,7 +45,7 @@ const AutoRun = () => {
   return (
     <div>
       <Navbar />
-      <div className='flex flex-col items-center justify-center h-screen bg-gray-100 w-full'>
+      <div className='flex flex-col items-center justify-center py-6 bg-gray-100 w-full'>
         <AutoChart liveData={data} graphSettings={graphSettings} />
 
       </div>
