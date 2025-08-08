@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import Navbar from '../../component/navbar/Navbar'
 import apiFetch from '../../services/apiFetch';
 import SocketService from '../../services/socketService';
-import ReactApexChart from 'react-apexcharts';
 import AutoChart from './AutoChart';
 
 const AutoRun = () => {
@@ -11,7 +10,7 @@ const AutoRun = () => {
 
   const fetchData = async () => {
     try {
-      const response = await apiFetch('/graph-settings');
+      const response = await apiFetch('/app/graph-settings');
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
