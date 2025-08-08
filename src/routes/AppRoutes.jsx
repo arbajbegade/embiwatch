@@ -6,6 +6,8 @@ import Report from '../pages/report/Report';
 import Settings from '../pages/settings/Settings';
 import SettingsDetails from '../pages/settings/Details';
 import { Toaster } from 'react-hot-toast';
+import AppSettings from '../pages/app/AppSettings';
+import SystemSettings from '../pages/system/SystemSettings';
 
 const AppRoutes = () => (
     <div className="h-screen bg-gray-100">
@@ -16,6 +18,8 @@ const AppRoutes = () => (
             <Route path="/report" element={<Report />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/settings/details" element={<SettingsDetails />} />
+            <Route path="/settings/app" element={<AppSettings />} />
+            <Route path="/settings/system" element={<SystemSettings />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
     </div>
