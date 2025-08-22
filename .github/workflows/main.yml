@@ -37,6 +37,8 @@ jobs:
       run: npm run build
       env:
         CI: false  # This ignores warnings during build
+        VITE_BASE_URL: ${{ secrets.VITE_BASE_URL }}
+        VITE_WS_URL: ${{ secrets.VITE_WS_URL }}
         
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
