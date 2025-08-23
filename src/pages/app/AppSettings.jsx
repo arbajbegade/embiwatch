@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Tabs, Tab, Box} from '@mui/material'
+import { Tabs, Tab, Box } from '@mui/material'
 import Navbar from '../../component/navbar/Navbar'
 import JobsDetails from './JobsDetails'
 import SDetails from './SDetails'
 import apiFetch from '../../services/apiFetch';
 import JobTable from './JobTable'
 
-// TabPanel component to display content for each tab
 function TabPanel({ children, value, index, ...other }) {
   return (
     <div
@@ -27,7 +26,6 @@ function TabPanel({ children, value, index, ...other }) {
 
 const AppSettings = () => {
   const [tabValue, setTabValue] = useState(0)
-  const [allJobs, setAllJobs] = useState([])
   const [units, setUnits] = useState([])
   const [settingsName, setSettingsName] = useState([])
   const [jobName, setJobName] = useState([])
@@ -36,26 +34,6 @@ const AppSettings = () => {
     setTabValue(newValue)
   }
 
-  const fetchAllJobData = () => {
-    apiFetch('/app/jobs', {
-      method: 'GET',
-      headers: {
-        'accept': 'application/json'
-      }
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setAllJobs(data.data || []);
-      })
-      .catch(err => {
-        console.error('Error fetching data:', err);
-      });
-  };
   const fetchData = () => {
     apiFetch('/app/units', {
       method: 'GET',
@@ -118,7 +96,6 @@ const AppSettings = () => {
   };
 
   useEffect(() => {
-    fetchAllJobData();
     fetchData();
     fetchSettingData();
     fetchJobNameData();
@@ -141,10 +118,10 @@ const AppSettings = () => {
           </TabPanel>
 
           <TabPanel value={tabValue} index={1}>
-           <JobsDetails />
+            <JobsDetails />
+            <JobTable allJobs={jobName} />
           </TabPanel>
         </Box>
-        <JobTable allJobs={allJobs} />
       </div>
     </div>
   )

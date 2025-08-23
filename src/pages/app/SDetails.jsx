@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import apiFetch from '../../services/apiFetch'
 import toast from 'react-hot-toast'
+import SettingTable from './SettingTable'
 
 const SDetails = ({ units, settingsName, jobName }) => {
     const [formData, setFormData] = useState({
@@ -17,17 +18,14 @@ const SDetails = ({ units, settingsName, jobName }) => {
             [name]: value
         }))
     }
-
     const handleSubmit = (event) => {
         event.preventDefault();
-
         const apiData = {
             setting_name: formData.setting_name,
             setting_value: formData.setting_value,
             job_id: parseInt(formData.job_id),
             uom_id: parseInt(formData.uom_id)
         };
-
         apiFetch('/app/settings', {
             method: 'POST',
             headers: {
@@ -57,8 +55,6 @@ const SDetails = ({ units, settingsName, jobName }) => {
                 toast.error('Error submitting form');
             });
     };
-
-
     const handleReset = () => {
         setFormData({
             job_id: '',
@@ -168,6 +164,7 @@ const SDetails = ({ units, settingsName, jobName }) => {
                     </div>
                 </div>
             </form>
+            <SettingTable jobId={formData.job_id} />
         </div>
     )
 }
