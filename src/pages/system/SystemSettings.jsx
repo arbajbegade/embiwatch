@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../component/navbar/Navbar'
 import apiFetch from '../../services/apiFetch';
+import SystemTable from './SystemTable';
 
 const SystemSettings = () => {
   const [devices, setDevices] = useState([]);
@@ -26,7 +27,7 @@ const SystemSettings = () => {
   // When interface is selected, fetch its fields
   useEffect(() => {
     if (!selectedInterface) return;
-    apiFetch(`/interfacefields?${selectedInterface}`, {
+    apiFetch(`/interfacefields?interface_id=${selectedInterface}`, {
       method: 'GET',
       headers: { 'accept': 'application/json' }
     })
@@ -38,7 +39,7 @@ const SystemSettings = () => {
   // When device is selected, fetch its settings
   useEffect(() => {
     if (!selectedDevice) return;
-    apiFetch(`/device/settings?${selectedDevice}`, {
+    apiFetch(`/device/settings?device_id=${selectedDevice}`, {
       method: 'GET',
       headers: { 'accept': 'application/json' }
     })
@@ -50,7 +51,7 @@ const SystemSettings = () => {
   return (
     <div>
       <Navbar />
-      <div className='py-6 w-full px-8'>
+      <div className='py-6 w-full px-8 bg-primary'>
         <h1 className='text-2xl font-bold text-center mb-6'>System Settings</h1>
 
         {/* Device Selector */}
@@ -100,22 +101,7 @@ const SystemSettings = () => {
           </div>
         )}
 
-        {/* Device Settings */}
-        {deviceSettings.length > 0 && (
-          <div>
-            <h2 className="text-lg font-semibold mb-3">Device Settings</h2>
-            {deviceSettings.map((setting, idx) => (
-              <div key={idx} className="mb-3">
-                <label className="block mb-1">{setting.label || setting.setting_name}</label>
-                <input
-                  type="text"
-                  defaultValue={setting.value}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-            ))}
-          </div>
-        )}
+        <SystemTable deviceSettings={deviceSettings} />
       </div>
     </div>
   )

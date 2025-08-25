@@ -12,7 +12,7 @@ const Navbar = () => {
   ).padStart(2, '0')}/${today.getFullYear()}`;
 
   return (
-    <div className="w-full flex items-center justify-between px-6 py-4 bg-gray-800 text-white shadow-md">
+    <div className="w-full flex items-center justify-between px-6 py-4 bg-gray-800 text-white shadow-md sticky top-0 z-10">
       {/* Left: Home Icon */}
       <button onClick={() => navigate('/')} className="flex items-center gap-2 hover:text-gray-300">
         <FaHome className="text-xl" />
