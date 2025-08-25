@@ -37,7 +37,7 @@ const Settings = () => {
             })
             .catch(err => {
                 console.error('Error fetching data:', err);
-                alert('Something went wrong. Please try again.'); // optional
+                toast.error('Something went wrong. Please try again.'); // optional
             });
     };
 
