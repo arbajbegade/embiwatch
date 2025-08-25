@@ -8,7 +8,7 @@ const SettingsDetails = () => {
     const OptionButton = ({ label, path, Icon }) => (
         <button
             onClick={() => navigate(path)}
-      className="w-36 h-36 rounded-full bg-gray-50 text-primary font-bold text-lg shadow-2xl hover:shadow-xl hover:bg-gray-200 transition-all duration-300 ease-in-out flex flex-col items-center justify-center gap-2"
+            className="w-36 h-36 rounded-full bg-gray-50 text-primary font-bold text-lg shadow-2xl hover:shadow-xl hover:bg-gray-200 transition-all duration-300 ease-in-out flex flex-col items-center justify-center gap-2"
         >
             <Icon className="text-3xl" />
             <span>{label}</span>

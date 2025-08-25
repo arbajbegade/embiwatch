@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { FaCog } from 'react-icons/fa';
-
+import apiFetch from '../../services/apiFetch'
+import toast from 'react-hot-toast';
 
 const Settings = () => {
     const [password, setPassword] = useState('');
@@ -10,7 +11,34 @@ const Settings = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        navigate('/settings/details');
+
+        apiFetch('/credentials', {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const user = data?.data || {};
+
+                if (user.admin && user.admin === password) {
+                    navigate('/settings/details');
+                } else if (user.super && user.super === password) {
+                    navigate('/settings/app');
+                } else {
+                    toast.error('Incorrect Password'); // or toast.error("Incorrect Password")
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching data:', err);
+                alert('Something went wrong. Please try again.'); // optional
+            });
     };
 
     return (
@@ -46,7 +74,7 @@ const Settings = () => {
                     required
                 />
 
-                <button type="submit"className="btn">
+                <button type="submit" className="btn">
                     Enter <FaArrowRight />
                 </button>
 
