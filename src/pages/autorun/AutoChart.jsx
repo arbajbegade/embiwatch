@@ -5,7 +5,6 @@ const tempKeys = ['temp1', 'temp2', 'temp3', 'temp4'];
 const colors = ['#FF4560', '#00E396', '#008FFB', '#FEB019', '#775DD0']; // humidity is last
 
 const AutoChart = ({ liveData, graphSettings }) => {
-  console.log('Live Data:', liveData);
   const [seriesData, setSeriesData] = useState({
     temp1: [],
     temp2: [],
