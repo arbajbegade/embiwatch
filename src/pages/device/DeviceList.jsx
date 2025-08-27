@@ -53,7 +53,7 @@ const DeviceList = () => {
         <div>
             <Navbar />
             <div className='py-6 w-full px-8 bg-gray-100'>
-                <h1 className='text-2xl font-bold text-center mb-6'>System Settings</h1>
+                <h1 className='text-2xl font-bold text-center mb-6'>Device Settings</h1>
                 <div className="grid grid-cols-2 gap-4 mb-2">
                     <div className="mb-4">
                         <label className="block mb-2 font-medium">Devices</label>
