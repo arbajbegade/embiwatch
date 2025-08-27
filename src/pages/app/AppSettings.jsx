@@ -4,7 +4,6 @@ import Navbar from '../../component/navbar/Navbar'
 import JobsDetails from './JobsDetails'
 import SDetails from './SDetails'
 import apiFetch from '../../services/apiFetch';
-import JobTable from './JobTable'
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -102,7 +101,7 @@ const AppSettings = () => {
   }, []);
 
   return (
-    <div className="h-screen overflow-y-hidden ">
+    <div className="min-h-screen bg-app-color">
       <Navbar />
       <div className='w-full'>
         <Box sx={{ width: '100%', margin: '0 auto', px: 2 }}>
@@ -119,7 +118,6 @@ const AppSettings = () => {
 
           <TabPanel value={tabValue} index={1}>
             <JobsDetails />
-            <JobTable allJobs={jobName} />
           </TabPanel>
         </Box>
       </div>

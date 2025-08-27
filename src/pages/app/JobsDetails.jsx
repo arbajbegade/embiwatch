@@ -1,8 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import apiFetch from '../../services/apiFetch'
+import JobTable from './JobTable'
+import toast from 'react-hot-toast'
 
 const JobsDetails = () => {
     const [job_name, setJobName] = useState('')
+    const [job_Name, setJob_Name] = useState([])
+
+    const fetchJobNameData = () => {
+        apiFetch('/app/jobs', {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setJob_Name(data.data || []);
+            })
+            .catch(err => {
+                console.error('Error fetching data:', err);
+            });
+    };
 
     const handleChange = (event) => {
         setJobName(event.target.value)
@@ -29,9 +53,9 @@ const JobsDetails = () => {
                 return response.json();
             })
             .then(data => {
-                console.log('Success:', data);
-                toast.success('Form submitted successfully!');
+                toast.success(data.message || 'Job added successfully');
                 setJobName('');
+                fetchJobNameData();
             })
             .catch(err => {
                 console.error('Error submitting form:', err);
@@ -42,6 +66,10 @@ const JobsDetails = () => {
     const handleReset = () => {
         setJobName('')
     }
+
+    useEffect(() => {
+        fetchJobNameData();
+    }, [])
 
     return (
         <div className="w-full">
@@ -78,6 +106,7 @@ const JobsDetails = () => {
                     </div>
                 </div>
             </form>
+            <JobTable allJobs={job_Name} />
         </div>
     )
 }

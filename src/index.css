@@ -8,6 +8,9 @@
 .bg-secondary {
   background-color: #fff;
 }
+.bg-app-color{
+  @apply bg-gray-100
+}
 
 .text-primary {
   @apply text-gray-800
