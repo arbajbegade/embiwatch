@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Navbar from '../../component/navbar/Navbar'
 import apiFetch from '../../services/apiFetch';
 import SystemTable from './SystemTable';
+import DeviceForm from './DeviceForm';
 
 const SystemSettings = () => {
   const [devices, setDevices] = useState([]);
@@ -51,56 +52,38 @@ const SystemSettings = () => {
   return (
     <div>
       <Navbar />
-      <div className='py-6 w-full px-8 bg-primary'>
+      <div className='py-6 w-full px-8 bg-gray-100'>
         <h1 className='text-2xl font-bold text-center mb-6'>System Settings</h1>
-
-        {/* Device Selector */}
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Devices</label>
-          <select
-            value={selectedDevice}
-            onChange={(e) => setSelectedDevice(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          >
-            <option value="">Select Device</option>
-            {devices.map((device) => (
-              <option key={device.device_id} value={device.device_id}>{device.device_name}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Interface Selector */}
-        <div className="mb-4">
-          <label className="block mb-2 font-medium">Interfaces</label>
-          <select
-            value={selectedInterface}
-            onChange={(e) => setSelectedInterface(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          >
-            <option value="">Select Interface</option>
-            {interfaces.map((intf) => (
-              <option key={intf.interface_id} value={intf.interface_id}>{intf.interface_name}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Interface Fields */}
-        {interfaceFields.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold mb-3">Interface Fields</h2>
-            {interfaceFields.map((field, idx) => (
-              <div key={idx} className="mb-3">
-                <label className="block mb-1">{field.label || field.name}</label>
-                <input
-                  type="text"
-                  placeholder={field.placeholder || ''}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-            ))}
+        <div className="grid grid-cols-2 gap-4 mb-2">
+          <div className="mb-4">
+            <label className="block mb-2 font-medium">Devices</label>
+            <select
+              value={selectedDevice}
+              onChange={(e) => setSelectedDevice(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+            >
+              <option value="">Select Device</option>
+              {devices.map((device) => (
+                <option key={device.device_id} value={device.device_id}>{device.device_name}</option>
+              ))}
+            </select>
           </div>
-        )}
 
+          <div className="mb-4">
+            <label className="block mb-2 font-medium">Interfaces</label>
+            <select
+              value={selectedInterface}
+              onChange={(e) => setSelectedInterface(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+            >
+              <option value="">Select Interface</option>
+              {interfaces.map((intf) => (
+                <option key={intf.interface_id} value={intf.interface_id}>{intf.interface_name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <DeviceForm interfaceFields={interfaceFields} />
         <SystemTable deviceSettings={deviceSettings} />
       </div>
     </div>
