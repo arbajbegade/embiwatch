@@ -1,15 +1,57 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import apiFetch from '../../services/apiFetch'
 import toast from 'react-hot-toast'
 import SettingTable from './SettingTable'
 
 const SDetails = ({ units, settingsName, jobName }) => {
+    const [details, setDetails] = React.useState([]);
+    const [error, setError] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
     const [formData, setFormData] = useState({
         job_id: '',
         setting_name: '',
         setting_value: '',
         uom_id: ''
     })
+
+    const fetchData = (jobId) => {
+        if (!jobId) {
+            setError("Job ID is required to fetch settings");
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        apiFetch(`/app/settings?job_id=${jobId}`, {
+            method: 'GET',
+            headers: {
+                'accept': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setDetails(data.data || []);
+            })
+            .catch(err => {
+                console.error('Error fetching data:', err);
+                setError("Failed to load settings");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
+    useEffect(() => {
+        if (formData.job_id) {
+            fetchData(formData.job_id);
+        }
+    }, [formData.job_id]);
 
     const handleChange = (event) => {
         const { name, value } = event.target
@@ -18,8 +60,13 @@ const SDetails = ({ units, settingsName, jobName }) => {
             [name]: value
         }))
     }
+
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (!formData.job_id || !formData.setting_name || !formData.setting_value || !formData.uom_id) {
+            toast.error('All fields are required');
+            return;
+        }
         const apiData = {
             setting_name: formData.setting_name,
             setting_value: formData.setting_value,
@@ -43,10 +90,11 @@ const SDetails = ({ units, settingsName, jobName }) => {
             .then(data => {
                 console.log('Success:', data);
                 toast.success('Form submitted successfully!');
+                fetchData(apiData.job_id);
                 setFormData({
                     setting_name: '',
                     setting_value: '',
-                    job_id: '',
+                    job_id: formData.job_id, // Keep job_id to maintain the table data
                     uom_id: ''
                 });
             })
@@ -55,6 +103,7 @@ const SDetails = ({ units, settingsName, jobName }) => {
                 toast.error('Error submitting form');
             });
     };
+
     const handleReset = () => {
         setFormData({
             job_id: '',
@@ -164,7 +213,7 @@ const SDetails = ({ units, settingsName, jobName }) => {
                     </div>
                 </div>
             </form>
-            <SettingTable jobId={formData.job_id} />
+            <SettingTable details={details} error={error} loading={loading} />
         </div>
     )
 }

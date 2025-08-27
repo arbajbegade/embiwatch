@@ -1,56 +1,11 @@
 import React, { useEffect } from 'react'
 import apiFetch from '../../services/apiFetch';
 
-const SettingTable = ({ jobId }) => {
-    const [details, setDetails] = React.useState([]);
-    const [error, setError] = React.useState(null);
-    const [loading, setLoading] = React.useState(false);
-
-    const fetchData = () => {
-        if (!jobId) {
-            setError("Job ID is required to fetch settings");
-            return;
-        }
-
-        setLoading(true);
-        setError(null);
-
-        apiFetch(`/app/settings?job_id=${jobId}`, {
-            method: 'GET',
-            headers: {
-                'accept': 'application/json'
-            }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                setDetails(data.data || []);
-            })
-            .catch(err => {
-                console.error('Error fetching data:', err);
-                setError("Failed to load settings");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-
-    useEffect(() => {
-        fetchData();
-    }, [jobId]);
+const SettingTable = ({ details, error, loading }) => {
 
     return (
         <div className="mt-1 flex justify-center p-9">
-            <div
-                className="overflow-hidden w-full max-h-96 overflow-y-auto"
-                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-                <style jsx>{`div::-webkit-scrollbar {display: none; /* Chrome, Safari, Opera */}`}</style>
-
+            <div className="w-full">
                 {error ? (
                     <div className="p-6 text-center text-red-500 font-medium">
                         {error}
