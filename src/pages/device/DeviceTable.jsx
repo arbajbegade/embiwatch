@@ -1,6 +1,6 @@
 import React from 'react'
 
-const SystemTable = ({ deviceSettings }) => {
+const DeviceTable = ({ deviceSettings }) => {
     return (
         <>{
             deviceSettings.length > 0 &&
@@ -69,4 +69,4 @@ const SystemTable = ({ deviceSettings }) => {
     )
 }
 
-export default SystemTable
+export default DeviceTable
