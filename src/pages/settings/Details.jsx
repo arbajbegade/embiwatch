@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaMobileAlt, FaCogs } from 'react-icons/fa'; // Updated icons
+import { FaMobileAlt, FaCogs  } from 'react-icons/fa'; // Updated icons
+import { GoDeviceDesktop } from "react-icons/go";
 
 const SettingsDetails = () => {
     const navigate = useNavigate();
@@ -19,6 +20,7 @@ const SettingsDetails = () => {
         <div className="h-screen flex justify-center items-center bg-primary">
             <div className="flex flex-row gap-16">
                 <OptionButton label="App" path="/settings/app" Icon={FaMobileAlt} />
+                <OptionButton label="Deivce" path="/settings/device" Icon={GoDeviceDesktop} />
                 <OptionButton label="System" path="/settings/system" Icon={FaCogs} />
             </div>
         </div>
