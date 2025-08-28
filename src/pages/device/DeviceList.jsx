@@ -38,15 +38,19 @@ const DeviceList = () => {
     }, [selectedInterface]);
 
     // When device is selected, fetch its settings
-    useEffect(() => {
-        if (!selectedDevice) return;
-        apiFetch(`/device/settings?device_id=${selectedDevice}`, {
+    const fetchDeviceSettings = (Device_Id ) => {
+        if (!Device_Id) return;
+        apiFetch(`/device/settings?device_id=${Device_Id}`, {
             method: 'GET',
             headers: { 'accept': 'application/json' }
         })
             .then(res => res.json())
             .then(data => setDeviceSettings(data.data || []))
             .catch(err => console.error("Error fetching device settings:", err));
+    }
+
+    useEffect(() => {
+        fetchDeviceSettings(selectedDevice)
     }, [selectedDevice]);
 
     return (
@@ -83,7 +87,7 @@ const DeviceList = () => {
                         </select>
                     </div>
                 </div>
-                <DeviceForm interfaceFields={interfaceFields} />
+                <DeviceForm interfaceFields={interfaceFields} selectedDevice={selectedDevice} fetchDeviceSettings={fetchDeviceSettings} />
                 <DeviceTable deviceSettings={deviceSettings} />
             </div>
         </div>

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import apiFetch from "../../services/apiFetch";
+import toast from "react-hot-toast";
 
-const DeviceForm = ({ interfaceFields }) => {
+const DeviceForm = ({ interfaceFields, selectedDevice, fetchDeviceSettings }) => {
     const [formValues, setFormValues] = useState({});
 
     const handleChange = (field, value) => {
@@ -10,9 +12,34 @@ const DeviceForm = ({ interfaceFields }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Form Submitted:", formValues);
+        if (!selectedDevice) {
+            toast.error("Please select a device before saving settings");
+            return;
+        }
+        try {
+            const res = await apiFetch(`/device/settings`, {
+                method: "POST",
+                headers: { "accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...formValues,
+                    device_id: Number(selectedDevice),
+                }),
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || "Failed to save settings");
+            }
+            const data = await res.json();
+            fetchDeviceSettings(selectedDevice);
+            toast.success(data.message || "Settings saved successfully");
+            setFormValues({});
+        } catch (err) {
+            console.error("Error saving settings:", err);
+            toast.error(err.message || "An unexpected error occurred");
+        }
     };
 
     return (
@@ -33,6 +60,7 @@ const DeviceForm = ({ interfaceFields }) => {
                                         onChange={(e) =>
                                             handleChange(item.interface_field, e.target.value)
                                         }
+                                        required
                                     >
                                         <option value="">
                                             Select {item.interface_field}
@@ -43,6 +71,16 @@ const DeviceForm = ({ interfaceFields }) => {
                                             </option>
                                         ))}
                                     </select>
+                                ) : item.interface_type === "textbox" ? (
+                                    <textarea
+                                        className="border rounded w-full py-2 px-3"
+                                        value={formValues[item.interface_field] || item.interface_value}
+                                        onChange={(e) =>
+                                            handleChange(item.interface_field, e.target.value)
+                                        }
+                                        rows={4} // you can adjust height
+                                        required
+                                    />
                                 ) : (
                                     <input
                                         type="text"
@@ -51,8 +89,10 @@ const DeviceForm = ({ interfaceFields }) => {
                                         onChange={(e) =>
                                             handleChange(item.interface_field, e.target.value)
                                         }
+                                        required
                                     />
                                 )}
+
                             </div>
                         ))}
                     </div>
