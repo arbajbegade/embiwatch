@@ -54,7 +54,7 @@ const AppSettings = () => {
       });
   };
   const fetchSettingData = () => {
-    apiFetch('/app/setting-names', {
+    apiFetch('/system/setting-names', {
       method: 'GET',
       headers: {
         'accept': 'application/json'

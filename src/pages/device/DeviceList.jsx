@@ -14,12 +14,12 @@ const DeviceList = () => {
 
     // Fetch devices + interfaces initially
     useEffect(() => {
-        apiFetch('/devices', { method: 'GET', headers: { 'accept': 'application/json' } })
+        apiFetch('/device/devices', { method: 'GET', headers: { 'accept': 'application/json' } })
             .then(res => res.json())
             .then(data => setDevices(data.data || []))
             .catch(err => console.error("Error fetching devices:", err));
 
-        apiFetch('/interfaces', { method: 'GET', headers: { 'accept': 'application/json' } })
+        apiFetch('/device/interfaces', { method: 'GET', headers: { 'accept': 'application/json' } })
             .then(res => res.json())
             .then(data => setInterfaces(data.data || []))
             .catch(err => console.error("Error fetching interfaces:", err));
@@ -28,7 +28,7 @@ const DeviceList = () => {
     // When interface is selected, fetch its fields
     useEffect(() => {
         if (!selectedInterface) return;
-        apiFetch(`/interfacefields?interface_id=${selectedInterface}`, {
+        apiFetch(`/device/interfacefields?interface_id=${selectedInterface}`, {
             method: 'GET',
             headers: { 'accept': 'application/json' }
         })
@@ -87,7 +87,7 @@ const DeviceList = () => {
                         </select>
                     </div>
                 </div>
-                <DeviceForm interfaceFields={interfaceFields} selectedDevice={selectedDevice} fetchDeviceSettings={fetchDeviceSettings} />
+                <DeviceForm interfaceFields={interfaceFields} selectedDevice={selectedDevice} setInterfaceFields={setInterfaceFields} fetchDeviceSettings={fetchDeviceSettings} />
                 <DeviceTable deviceSettings={deviceSettings} />
             </div>
         </div>

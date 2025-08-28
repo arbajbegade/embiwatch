@@ -2,15 +2,45 @@ import React, { useState } from "react";
 import apiFetch from "../../services/apiFetch";
 import toast from "react-hot-toast";
 
-const DeviceForm = ({ interfaceFields, selectedDevice, fetchDeviceSettings }) => {
+const DeviceForm = ({ interfaceFields, selectedDevice, fetchDeviceSettings, setInterfaceFields }) => {
     const [formValues, setFormValues] = useState({});
-
     const handleChange = (field, value) => {
         setFormValues((prev) => ({
             ...prev,
             [field]: value,
         }));
     };
+    const handleComPort = async (item_id) => {
+        console.log('item', item_id);
+        try {
+            const res = await apiFetch(`/device/comports`, {
+                method: "GET",
+                headers: { "accept": "application/json", "Content-Type": "application/json" },
+            });
+            const data = await res.json();
+            console.log('data', data.data);
+
+            // Find the comPort field and update it
+            const updatedInterfaceFields = interfaceFields.map(field => {
+                if (field.interface_field === "comPort") {
+                    return {
+                        ...field,
+                        interface_value: JSON.stringify(data.data)
+                    };
+                }
+                return field;
+            });
+            setInterfaceFields(updatedInterfaceFields);
+            setFormValues((prev) => ({
+                ...prev,
+                comPort: ""
+            }));
+            toast.success("COM ports refreshed successfully");
+        } catch (err) {
+            console.error("Error saving settings:", err);
+            toast.error(err.message || "An unexpected error occurred");
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -81,6 +111,10 @@ const DeviceForm = ({ interfaceFields, selectedDevice, fetchDeviceSettings }) =>
                                         rows={4} // you can adjust height
                                         required
                                     />
+                                ) : item.interface_type === "button" ? (
+                                    <button className="btn" onClick={() => handleComPort(item.if_id)} type="button">
+                                        Refresh
+                                    </button>
                                 ) : (
                                     <input
                                         type="text"
