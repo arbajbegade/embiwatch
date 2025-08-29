@@ -1,6 +1,33 @@
+import { useEffect } from 'react';
 import Navbar from '../../component/navbar/Navbar'
+import apiFetch from "../../services/apiFetch"
 
 const SystemSettings = () => {
+  const fetchSettingData = () => {
+    apiFetch('/system/setting-names', {
+      method: 'GET',
+      headers: {
+        'accept': 'application/json'
+      }
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+       console.log(data);
+      })
+      .catch(err => {
+        console.error('Error fetching data:', err);
+      });
+  };
+
+  useEffect(() => {
+    fetchSettingData(); 
+  }, []);
+
   return (
     <div>
       <Navbar />
