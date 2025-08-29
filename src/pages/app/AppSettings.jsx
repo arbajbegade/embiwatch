@@ -102,7 +102,7 @@ const AppSettings = () => {
 
   return (
     <div className="min-h-screen bg-app-color">
-      <Navbar />
+      <Navbar back />
       <div className='w-full'>
         <Box sx={{ width: '100%', margin: '0 auto', px: 2 }}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
