@@ -151,7 +151,7 @@ const SDetails = ({ units, settingsName, jobName }) => {
                         >
                             <option value="">Select Setting Name</option>
                             {settingsName && settingsName.map((item, index) => (
-                                <option key={index} value={item.sn_id}>
+                                <option key={index} value={item.setting_name}>
                                     {item.setting_name}
                                 </option>
                             ))}
