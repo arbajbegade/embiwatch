@@ -3,6 +3,7 @@ import Navbar from '../../component/navbar/Navbar'
 import apiFetch from '../../services/apiFetch';
 import DeviceTable from './DeviceTable';
 import DeviceForm from './DeviceForm';
+import DeviceLogic from './DeviceLogic';
 
 const DeviceList = () => {
     const [devices, setDevices] = useState([]);
@@ -38,7 +39,7 @@ const DeviceList = () => {
     }, [selectedInterface]);
 
     // When device is selected, fetch its settings
-    const fetchDeviceSettings = (Device_Id ) => {
+    const fetchDeviceSettings = (Device_Id) => {
         if (!Device_Id) return;
         apiFetch(`/device/settings?device_id=${Device_Id}`, {
             method: 'GET',
@@ -87,7 +88,15 @@ const DeviceList = () => {
                         </select>
                     </div>
                 </div>
-                <DeviceForm interfaceFields={interfaceFields} selectedDevice={selectedDevice} setInterfaceFields={setInterfaceFields} fetchDeviceSettings={fetchDeviceSettings} />
+
+                <DeviceLogic
+                    interfaceFields={interfaceFields}
+                    selectedDevice={selectedDevice}
+                    setInterfaceFields={setInterfaceFields}
+                    fetchDeviceSettings={fetchDeviceSettings}
+                    deviceSettings={deviceSettings}
+                    selectedInterface={selectedInterface}
+                />
                 <DeviceTable deviceSettings={deviceSettings} />
             </div>
         </div>

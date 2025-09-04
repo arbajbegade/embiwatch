@@ -1,84 +1,35 @@
-import React, { useState } from "react";
-import apiFetch from "../../services/apiFetch";
-import toast from "react-hot-toast";
+import { useEffect } from "react";
 
-const DeviceForm = ({ interfaceFields, selectedDevice, fetchDeviceSettings, setInterfaceFields }) => {
-    const [formValues, setFormValues] = useState({});
-    const handleChange = (field, value) => {
-        setFormValues((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
-    };
-    const handleComPort = async (item_id) => {
-        console.log('item', item_id);
-        try {
-            const res = await apiFetch(`/device/comports`, {
-                method: "GET",
-                headers: { "accept": "application/json", "Content-Type": "application/json" },
-            });
-            const data = await res.json();
-            console.log('data', data.data);
 
-            // Find the comPort field and update it
-            const updatedInterfaceFields = interfaceFields.map(field => {
-                if (field.interface_field === "comPort") {
-                    return {
-                        ...field,
-                        interface_value: JSON.stringify(data.data)
-                    };
-                }
-                return field;
-            });
-            setInterfaceFields(updatedInterfaceFields);
-            setFormValues((prev) => ({
-                ...prev,
-                comPort: ""
-            }));
-            toast.success("COM ports refreshed successfully");
-        } catch (err) {
-            console.error("Error saving settings:", err);
-            toast.error(err.message || "An unexpected error occurred");
-        }
-    }
+const DeviceForm = ({ formValues, interfaceFields, handleChange, handleComPort, handleSubmit, deviceSettings,setFormValues }) => {
+    const mergedFields = interfaceFields.map(field => {
+        const matchedSetting = deviceSettings.find(
+            setting =>
+                setting.interface_id === field.interface_id &&
+                setting.setting_name === field.interface_field
+        );
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!selectedDevice) {
-            toast.error("Please select a device before saving settings");
-            return;
-        }
-        try {
-            const res = await apiFetch(`/device/settings`, {
-                method: "POST",
-                headers: { "accept": "application/json", "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...formValues,
-                    device_id: Number(selectedDevice),
-                }),
-            });
+        return {
+            ...field,
+            i_value: matchedSetting ? matchedSetting.setting_value : "" // add new key i_value
+        };
+    });
 
-            if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData.message || "Failed to save settings");
-            }
-            const data = await res.json();
-            fetchDeviceSettings(selectedDevice);
-            toast.success(data.message || "Settings saved successfully");
-            setFormValues({});
-        } catch (err) {
-            console.error("Error saving settings:", err);
-            toast.error(err.message || "An unexpected error occurred");
-        }
-    };
+    useEffect(() => {
+        const initialValues = {};
+        mergedFields.forEach(item => {
+            initialValues[item.interface_field] = item.i_value || "";
+        });
+        setFormValues(initialValues); // assuming you have setFormValues from parent
+    }, [interfaceFields, deviceSettings]);
 
     return (
         <div>
-            {interfaceFields.length > 0 && (
+            {mergedFields.length > 0 && (
                 <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <h2 className="text-xl font-bold mb-4">Interface Fields</h2>
                     <div className="grid grid-cols-2 gap-4 mb-2">
-                        {interfaceFields.map((item, index) => (
+                        {mergedFields.map((item, index) => (
                             <div className="mb-4" key={index}>
                                 <label className="block text-gray-700 text-sm font-bold mb-2">
                                     {item.interface_field}
@@ -119,7 +70,7 @@ const DeviceForm = ({ interfaceFields, selectedDevice, fetchDeviceSettings, setI
                                     <input
                                         type="text"
                                         className="border rounded w-full py-2 px-3"
-                                        value={formValues[item.interface_field] || item.interface_value}
+                                        value={formValues[item.interface_field] || item.i_value}
                                         onChange={(e) =>
                                             handleChange(item.interface_field, e.target.value)
                                         }
