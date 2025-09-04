@@ -3,6 +3,7 @@ import { FaHome } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { IoArrowUndo } from "react-icons/io5";
 import apiFetch from "../../services/apiFetch";
+import DevStatus from './DevStatus';
 
 const Navbar = ({ back }) => {
   const navigate = useNavigate();
@@ -14,16 +15,6 @@ const Navbar = ({ back }) => {
   const monthName = monthNames[today.getMonth()];
   const year = today.getFullYear();
   const formattedDate = `${dayName} ${todaysDate} ${monthName} ${year}`;
-
-  const [device, setDevices] = useState([]);
-
-  useEffect(() => {
-    apiFetch('/device/devices', { method: 'GET', headers: { 'accept': 'application/json' } })
-      .then(res => res.json())
-      .then(data => setDevices(data.data || []))
-      .catch(err => console.error("Error fetching devices:", err));
-  }, []);
-
 
   return (
     <div className="w-full flex items-center justify-between px-6 py-4 bg-gray-800 text-white shadow-md sticky top-0 z-10">
@@ -40,13 +31,7 @@ const Navbar = ({ back }) => {
         )}
       </div>
 
-      <div className='flex'>{
-        device.map((dev, index) => (
-          <div key={index} className="ml-4 px-3 py-1 bg-gray-700 rounded-2xl text-sm">
-            {dev.device_name}
-          </div>
-        ))
-      }</div>
+      <DevStatus />
 
       <div className="text-sm font-medium">{formattedDate}</div>
     </div>
